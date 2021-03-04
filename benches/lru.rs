@@ -1,0 +1,45 @@
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use std::collections::hash_map;
+
+struct Bar([u64; 4]);
+
+const CAP: usize = 1 << 22;
+
+fn bench_ritelinked(c: &mut Criterion) {
+    use ritelinked::LinkedHashMap;
+
+    c.bench_function("ritelinked", |b| {
+        let mut map = LinkedHashMap::with_capacity_and_hasher(CAP, hash_map::RandomState::new());
+        let mut count = 0;
+
+        b.iter(|| {
+            count += 1;
+            let bar = black_box(Bar([0x42; 4]));
+            map.insert(count, bar);
+            if map.len() >= CAP {
+                map.pop_front();
+            }
+        });
+    });
+}
+
+fn bench_hashlink(c: &mut Criterion) {
+    use hashlink::LinkedHashMap;
+
+    c.bench_function("hashlink", |b| {
+        let mut map = LinkedHashMap::with_capacity_and_hasher(CAP, hash_map::RandomState::new());
+        let mut count = 0;
+
+        b.iter(|| {
+            count += 1;
+            let bar = black_box(Bar([0x42; 4]));
+            map.insert(count, bar);
+            if map.len() >= CAP {
+                map.pop_front();
+            }
+        });
+    });
+}
+
+criterion_group!(lru, bench_ritelinked, bench_hashlink);
+criterion_main!(lru);

@@ -31,5 +31,16 @@ griddle = { version = "0.4", default-features = false, optional = true }
 serde_ = { version = "1.0", default-features = false, optional = true, package = "serde" }
 
 [dev-dependencies]
+# test
 fnv = "1.0.7"
 serde_test = "1.0"
+# bench
+criterion = "0.3"
+hashlink = "0.6"
+
+[[bench]]
+name = "lru"
+harness = false
+
+[profile.release]
+debug = true
