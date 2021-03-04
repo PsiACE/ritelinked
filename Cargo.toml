@@ -1,6 +1,6 @@
 [package]
 name = "ritelinked"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Chojan Shang <psiace@outlook.com>"]
 edition = "2018"
 description = "HashMap-like containers that hold their key-value pairs in a user controllable order"
@@ -25,11 +25,11 @@ serde-amortized = [ "serde", "amortized", "griddle/serde" ]
 inline-more-amortized = [ "inline-more", "amortized", "griddle/inline-more" ]
 
 [dependencies]
-# For the default hasher
-ahash_ = { version = "0.6.1", default-features = false, optional = true, package = "ahash" }
-hashbrown = { version = "0.9.1", default-features = false }
-griddle = { version = "0.4.1", default-features = false, optional = true }
-serde_ = { version = "1.0.25", default-features = false, optional = true, package = "serde" }
+ahash_ = { version = "0.7", default-features = false, optional = true, package = "ahash" }
+hashbrown = { version = "0.9", default-features = false }
+griddle = { version = "0.4", default-features = false, optional = true }
+serde_ = { version = "1.0", default-features = false, optional = true, package = "serde" }
 
 [dev-dependencies]
+fnv = "1.0.7"
 serde_test = "1.0"
