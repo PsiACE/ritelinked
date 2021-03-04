@@ -1,12 +1,23 @@
-use std::{
+mod size_hint {
+    use core::cmp;
+
+    /// This presumably exists to prevent denial of service attacks.
+    ///
+    /// Original discussion: https://github.com/serde-rs/serde/issues/1114.
+    #[cfg_attr(feature = "inline-more", inline)]
+    pub(super) fn cautious(hint: Option<usize>) -> usize {
+        cmp::min(hint.unwrap_or(0), 4096)
+    }
+}
+
+use core::{
     fmt::{self, Formatter},
     hash::{BuildHasher, Hash},
     marker::PhantomData,
 };
 
-use serde::{
+use serde_::{
     de::{MapAccess, SeqAccess, Visitor},
-    ser::{SerializeMap, SerializeSeq},
     Deserialize, Deserializer, Serialize, Serializer,
 };
 
@@ -14,29 +25,27 @@ use crate::{LinkedHashMap, LinkedHashSet};
 
 // LinkedHashMap impls
 
-impl<K, V, S> Serialize for LinkedHashMap<K, V, S>
+impl<K, V, H> Serialize for LinkedHashMap<K, V, H>
 where
     K: Serialize + Eq + Hash,
     V: Serialize,
-    S: BuildHasher,
+    H: BuildHasher,
 {
-    #[inline]
-    fn serialize<T: Serializer>(&self, serializer: T) -> Result<T::Ok, T::Error> {
-        let mut map_serializer = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self {
-            map_serializer.serialize_key(k)?;
-            map_serializer.serialize_value(v)?;
-        }
-        map_serializer.end()
+    #[cfg_attr(feature = "inline-more", inline)]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.collect_map(self)
     }
 }
 
 #[derive(Debug)]
-pub struct LinkedHashMapVisitor<K, V> {
-    marker: PhantomData<LinkedHashMap<K, V>>,
+pub struct LinkedHashMapVisitor<K, V, S> {
+    marker: PhantomData<LinkedHashMap<K, V, S>>,
 }
 
-impl<K, V> LinkedHashMapVisitor<K, V> {
+impl<K, V, S> LinkedHashMapVisitor<K, V, S> {
     fn new() -> Self {
         LinkedHashMapVisitor {
             marker: PhantomData,
@@ -44,26 +53,30 @@ impl<K, V> LinkedHashMapVisitor<K, V> {
     }
 }
 
-impl<K, V> Default for LinkedHashMapVisitor<K, V> {
+impl<K, V, S> Default for LinkedHashMapVisitor<K, V, S> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'de, K, V> Visitor<'de> for LinkedHashMapVisitor<K, V>
+impl<'de, K, V, S> Visitor<'de> for LinkedHashMapVisitor<K, V, S>
 where
     K: Deserialize<'de> + Eq + Hash,
     V: Deserialize<'de>,
+    S: BuildHasher + Default,
 {
-    type Value = LinkedHashMap<K, V>;
+    type Value = LinkedHashMap<K, V, S>;
 
     fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
         write!(formatter, "a map")
     }
 
-    #[inline]
+    #[cfg_attr(feature = "inline-more", inline)]
     fn visit_map<M: MapAccess<'de>>(self, mut map: M) -> Result<Self::Value, M::Error> {
-        let mut values = LinkedHashMap::with_capacity(map.size_hint().unwrap_or(0));
+        let mut values = LinkedHashMap::with_capacity_and_hasher(
+            size_hint::cautious(map.size_hint()),
+            S::default(),
+        );
 
         while let Some((k, v)) = map.next_entry()? {
             values.insert(k, v);
@@ -73,10 +86,11 @@ where
     }
 }
 
-impl<'de, K, V> Deserialize<'de> for LinkedHashMap<K, V>
+impl<'de, K, V, S> Deserialize<'de> for LinkedHashMap<K, V, S>
 where
     K: Deserialize<'de> + Eq + Hash,
     V: Deserialize<'de>,
+    S: BuildHasher + Default,
 {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         deserializer.deserialize_map(LinkedHashMapVisitor::default())
@@ -85,27 +99,26 @@ where
 
 // LinkedHashSet impls
 
-impl<T, S> Serialize for LinkedHashSet<T, S>
+impl<T, H> Serialize for LinkedHashSet<T, H>
 where
     T: Serialize + Eq + Hash,
-    S: BuildHasher,
+    H: BuildHasher,
 {
-    #[inline]
-    fn serialize<U: Serializer>(&self, serializer: U) -> Result<U::Ok, U::Error> {
-        let mut seq_serializer = serializer.serialize_seq(Some(self.len()))?;
-        for v in self {
-            seq_serializer.serialize_element(v)?;
-        }
-        seq_serializer.end()
+    #[cfg_attr(feature = "inline-more", inline)]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.collect_seq(self)
     }
 }
 
 #[derive(Debug)]
-pub struct LinkedHashSetVisitor<T> {
-    marker: PhantomData<LinkedHashSet<T>>,
+pub struct LinkedHashSetVisitor<T, S> {
+    marker: PhantomData<LinkedHashSet<T, S>>,
 }
 
-impl<T> LinkedHashSetVisitor<T> {
+impl<T, S> LinkedHashSetVisitor<T, S> {
     fn new() -> Self {
         LinkedHashSetVisitor {
             marker: PhantomData,
@@ -113,25 +126,29 @@ impl<T> LinkedHashSetVisitor<T> {
     }
 }
 
-impl<T> Default for LinkedHashSetVisitor<T> {
+impl<T, S> Default for LinkedHashSetVisitor<T, S> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'de, T> Visitor<'de> for LinkedHashSetVisitor<T>
+impl<'de, T, H> Visitor<'de> for LinkedHashSetVisitor<T, H>
 where
     T: Deserialize<'de> + Eq + Hash,
+    H: BuildHasher + Default,
 {
-    type Value = LinkedHashSet<T>;
+    type Value = LinkedHashSet<T, H>;
 
     fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
         write!(formatter, "a sequence")
     }
 
-    #[inline]
+    #[cfg_attr(feature = "inline-more", inline)]
     fn visit_seq<S: SeqAccess<'de>>(self, mut seq: S) -> Result<Self::Value, S::Error> {
-        let mut values = LinkedHashSet::with_capacity(seq.size_hint().unwrap_or(0));
+        let mut values = LinkedHashSet::with_capacity_and_hasher(
+            size_hint::cautious(seq.size_hint()),
+            H::default(),
+        );
 
         while let Some(v) = seq.next_element()? {
             values.insert(v);
@@ -141,9 +158,10 @@ where
     }
 }
 
-impl<'de, T> Deserialize<'de> for LinkedHashSet<T>
+impl<'de, T, S> Deserialize<'de> for LinkedHashSet<T, S>
 where
     T: Deserialize<'de> + Eq + Hash,
+    S: BuildHasher + Default,
 {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         deserializer.deserialize_seq(LinkedHashSetVisitor::default())
