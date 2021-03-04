@@ -19,9 +19,10 @@ ahash = [ "ahash_", "hashbrown/ahash" ]
 serde = [ "serde_", "hashbrown/serde" ]
 inline-more = [ "hashbrown/inline-more" ]
 
-ahash-amortized = [ "ahash", "griddle/ahash" ]
-serde-amortized = [ "serde", "griddle/serde" ]
-inline-more-amortized = [ "inline-more", "griddle/inline-more" ]
+amortized = ["griddle"]
+ahash-amortized = [ "ahash", "amortized", "griddle/ahash" ]
+serde-amortized = [ "serde", "amortized", "griddle/serde" ]
+inline-more-amortized = [ "inline-more", "amortized", "griddle/inline-more" ]
 
 [dependencies]
 # For the default hasher
