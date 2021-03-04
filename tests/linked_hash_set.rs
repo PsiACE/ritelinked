@@ -1,3 +1,5 @@
+#![cfg(feature = "default")]
+
 use hashbrown::hash_map::DefaultHashBuilder;
 use ritelinked::linked_hash_set::{self, LinkedHashSet};
 

@@ -1,3 +1,5 @@
+#![cfg(feature = "default")]
+
 use ritelinked::{linked_hash_map, LinkedHashMap};
 
 #[allow(dead_code)]
