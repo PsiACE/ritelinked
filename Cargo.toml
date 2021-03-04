@@ -11,7 +11,7 @@ keywords = ["data-structures"]
 license = "MIT OR Apache-2.0"
 
 [features]
-default = ["ahash", "inline-more-amortized"]
+default = ["ahash-amortized", "inline-more-amortized"]
 
 ahash-compile-time-rng = ["ahash_/compile-time-rng"]
 
