@@ -6,10 +6,10 @@ use std::{
     ops::{BitAnd, BitOr, BitXor, Sub},
 };
 
-#[cfg(not(feature = "amortized"))]
-use hashbrown::hash_map::DefaultHashBuilder;
 #[cfg(feature = "amortized")]
 use griddle::hash_map::DefaultHashBuilder;
+#[cfg(not(feature = "amortized"))]
+use hashbrown::hash_map::DefaultHashBuilder;
 
 use crate::linked_hash_map::{self, LinkedHashMap, TryReserveError};
 

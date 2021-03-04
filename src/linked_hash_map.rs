@@ -20,7 +20,6 @@ use griddle::{hash_map, HashMap};
 #[cfg(feature = "amortized")]
 pub type TryReserveError = griddle::TryReserveError;
 
-
 /// A version of `HashMap` that has a user controllable order for its entries.
 ///
 /// It achieves this by keeping its entries in an internal linked list and using a `HashMap` to
