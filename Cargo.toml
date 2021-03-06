@@ -38,6 +38,7 @@ serde_test = "1.0"
 # bench
 criterion = "0.3"
 hashlink = "0.6"
+linked-hash-map = "0.5"
 
 [[bench]]
 name = "lru"

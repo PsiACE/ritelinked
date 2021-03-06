@@ -41,5 +41,23 @@ fn bench_hashlink(c: &mut Criterion) {
     });
 }
 
-criterion_group!(lru, bench_ritelinked, bench_hashlink);
+fn bench_linked_hash_map(c: &mut Criterion) {
+    use linked_hash_map::LinkedHashMap;
+
+    c.bench_function("linked-hash-map", |b| {
+        let mut map = LinkedHashMap::with_capacity_and_hasher(CAP, hash_map::RandomState::new());
+        let mut count = 0;
+
+        b.iter(|| {
+            count += 1;
+            let bar = black_box(Bar([0x42; 4]));
+            map.insert(count, bar);
+            if map.len() >= CAP {
+                map.pop_front();
+            }
+        });
+    });
+}
+
+criterion_group!(lru, bench_ritelinked, bench_hashlink, bench_linked_hash_map);
 criterion_main!(lru);
