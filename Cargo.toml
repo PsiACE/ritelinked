@@ -1,6 +1,6 @@
 [package]
 name = "ritelinked"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Chojan Shang <psiace@outlook.com>"]
 edition = "2018"
 description = "HashMap-like containers that hold their key-value pairs in a user controllable order"
