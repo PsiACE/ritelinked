@@ -7,7 +7,8 @@ description = "HashMap-like containers that hold their key-value pairs in a user
 repository = "https://github.com/ritedb/ritelinked"
 documentation = "https://docs.rs/ritelinked"
 readme = "README.md"
-keywords = ["data-structures"]
+keywords = ["data-structures", "no_std", "linked-hash-map", "linked-hash-set", "amortized"]
+categories = ["data-structures", "no-std"]
 license = "MIT OR Apache-2.0"
 
 [features]

@@ -1,5 +1,7 @@
-use alloc::boxed::Box;
+use crate::DefaultHashBuilder;
+use crate::TryReserveError;
 
+use alloc::boxed::Box;
 use core::{
     borrow::Borrow,
     cmp::Ordering,
@@ -14,13 +16,9 @@ use core::{
 
 #[cfg(not(feature = "amortized"))]
 use hashbrown::{hash_map, HashMap};
-#[cfg(not(feature = "amortized"))]
-pub type TryReserveError = hashbrown::TryReserveError;
 
 #[cfg(feature = "amortized")]
 use griddle::{hash_map, HashMap};
-#[cfg(feature = "amortized")]
-pub type TryReserveError = griddle::TryReserveError;
 
 /// A version of `HashMap` that has a user controllable order for its entries.
 ///
@@ -37,7 +35,7 @@ pub type TryReserveError = griddle::TryReserveError;
 /// * Methods that have the word `insert` will insert a new entry ot the back of the list, and if
 ///   that method might replace an entry, that method will *also move that existing entry to the
 ///   back*.
-pub struct LinkedHashMap<K, V, S = hash_map::DefaultHashBuilder> {
+pub struct LinkedHashMap<K, V, S = DefaultHashBuilder> {
     map: HashMap<NonNull<Node<K, V>>, (), NullHasher>,
     // We need to keep any custom hash builder outside of the HashMap so we can access it alongside
     // the entry API without mutable aliasing.
@@ -52,7 +50,7 @@ pub struct LinkedHashMap<K, V, S = hash_map::DefaultHashBuilder> {
 }
 
 #[cfg(feature = "ahash")]
-impl<K, V> LinkedHashMap<K, V, hash_map::DefaultHashBuilder> {
+impl<K, V> LinkedHashMap<K, V, DefaultHashBuilder> {
     #[cfg_attr(feature = "inline-more", inline)]
     pub fn new() -> Self {
         Self::default()
@@ -60,7 +58,7 @@ impl<K, V> LinkedHashMap<K, V, hash_map::DefaultHashBuilder> {
 
     #[cfg_attr(feature = "inline-more", inline)]
     pub fn with_capacity(capacity: usize) -> Self {
-        Self::with_capacity_and_hasher(capacity, hash_map::DefaultHashBuilder::default())
+        Self::with_capacity_and_hasher(capacity, DefaultHashBuilder::default())
     }
 }
 

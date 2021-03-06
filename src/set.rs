@@ -1,3 +1,6 @@
+use crate::DefaultHashBuilder;
+use crate::TryReserveError;
+
 use core::{
     borrow::Borrow,
     fmt,
@@ -6,12 +9,7 @@ use core::{
     ops::{BitAnd, BitOr, BitXor, Sub},
 };
 
-#[cfg(feature = "amortized")]
-use griddle::hash_map::DefaultHashBuilder;
-#[cfg(not(feature = "amortized"))]
-use hashbrown::hash_map::DefaultHashBuilder;
-
-use crate::linked_hash_map::{self, LinkedHashMap, TryReserveError};
+use crate::linked_hash_map::{self, LinkedHashMap};
 
 pub struct LinkedHashSet<T, S = DefaultHashBuilder> {
     map: LinkedHashMap<T, (), S>,
