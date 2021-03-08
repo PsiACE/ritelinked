@@ -12,7 +12,7 @@ jobs:
         fetch-depth: 0
     - uses: BobAnkh/auto-generate-changelog@master
       with:
-        REPO_NAME: 'ritedb/ritekv'
+        REPO_NAME: 'ritedb/ritelinked'
         ACCESS_TOKEN: ${{secrets.GITHUB_TOKEN}}
         PATH: '/CHANGELOG.md'
         COMMIT_MESSAGE: 'docs(changlog): auto update by ci'
