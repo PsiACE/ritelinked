@@ -1,6 +1,17 @@
 # CHANGELOG
 
+## Unreleased
+
+Changes unreleased.
+
+### Documentation
+
+- changlog:
+  - auto update by ci ([3aa6e73](https://github.com/ritedb/ritelinked/commit/3aa6e73bc310a299accf8ef3c212aa34cce2064d))
+
 ## [v0.3.0](https://github.com/ritedb/ritelinked/releases/tag/v0.3.0) - 2021-05-04 03:02:33
+
+Glad to welcome hashbrown v0.11 and griddle v0.5.1
 
 - feat(map): add to_front & to_back methods
 - fix(set): check ordering when comparing sets
