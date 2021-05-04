@@ -1,6 +1,6 @@
 [package]
 name = "ritelinked"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Chojan Shang <psiace@outlook.com>"]
 edition = "2018"
 description = "HashMap-like containers that hold their key-value pairs in a user controllable order"
@@ -27,8 +27,8 @@ inline-more-amortized = [ "inline-more", "amortized", "griddle/inline-more" ]
 
 [dependencies]
 ahash_ = { version = "0.7", default-features = false, optional = true, package = "ahash" }
-hashbrown = { version = "0.9", default-features = false }
-griddle = { version = "0.4", default-features = false, optional = true }
+hashbrown = { version = "0.11", default-features = false }
+griddle = { version = "0.5.1", default-features = false, optional = true }
 serde_ = { version = "1.0", default-features = false, optional = true, package = "serde" }
 
 [dev-dependencies]
@@ -37,7 +37,7 @@ fnv = "1.0.7"
 serde_test = "1.0"
 # bench
 criterion = "0.3"
-hashlink = "0.6"
+hashlink = "0.7"
 linked-hash-map = "0.5"
 
 [[bench]]
