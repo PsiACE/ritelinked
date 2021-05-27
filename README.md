@@ -28,6 +28,24 @@ let _cached_val = lru_cache
     .or_insert_with(|| (key.clone(), 42));
 ```
 
+## Benchmark
+
+```
+ritelinked              time:   [165.09 ns 165.40 ns 165.79 ns]                       
+Found 12 outliers among 100 measurements (12.00%)
+  5 (5.00%) high mild
+  7 (7.00%) high severe
+
+hashlink                time:   [168.11 ns 168.48 ns 168.96 ns]                     
+Found 13 outliers among 100 measurements (13.00%)
+  2 (2.00%) high mild
+  11 (11.00%) high severe
+
+linked-hash-map         time:   [370.98 ns 382.59 ns 397.44 ns]                            
+Found 7 outliers among 100 measurements (7.00%)
+  7 (7.00%) high mild
+```
+
 ## Credit
 
 It is a fork of the popular crate [hashlink](https://crates.io/crates/hashlink), but more adjustments and improvements have been made to the code .
