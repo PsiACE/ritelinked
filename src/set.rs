@@ -66,14 +66,6 @@ impl<T, S> LinkedHashSet<T, S> {
     pub fn clear(&mut self) {
         self.map.clear()
     }
-
-    #[cfg_attr(feature = "inline-more", inline)]
-    pub fn retain<F>(&mut self, mut f: F)
-    where
-        F: FnMut(&T) -> bool,
-    {
-        self.map.retain(|k, _| f(k));
-    }
 }
 
 impl<T, S> LinkedHashSet<T, S>
@@ -236,6 +228,14 @@ where
         Q: Hash + Eq,
     {
         self.map.remove(value).is_some()
+    }
+
+    #[cfg_attr(feature = "inline-more", inline)]
+    pub fn retain<F>(&mut self, mut f: F)
+    where
+        F: FnMut(&T) -> bool,
+    {
+        self.map.retain(|k, _| f(k));
     }
 
     #[cfg_attr(feature = "inline-more", inline)]

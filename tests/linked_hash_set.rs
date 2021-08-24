@@ -527,3 +527,19 @@ fn test_order_equality() {
     set2.to_front(&4);
     assert_eq!(set1, set2);
 }
+
+#[test]
+fn test_retain_order() {
+    let xs = [1, 2, 3, 4, 5, 6];
+    let mut set: LinkedHashSet<i32> = xs.iter().cloned().collect();
+    let mut vec = Vec::new();
+    set.retain(|&k| {
+        if k % 2 == 0 {
+            true
+        } else {
+            vec.push(k);
+            false
+        }
+    });
+    assert_eq!(vec![1, 3, 5], vec);
+}
