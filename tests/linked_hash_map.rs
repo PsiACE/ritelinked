@@ -60,6 +60,18 @@ fn test_insert_and_get() {
 }
 
 #[test]
+fn test_get_refresh() {
+    let mut map = LinkedHashMap::new();
+
+    map.insert(1, "a");
+    map.insert(2, "b");
+    map.insert(3, "d");
+
+    assert_eq!(map.get_refresh(&2), Some(&mut "b"));
+    assert_eq!((&2, &"b"), map.iter().rev().next().unwrap());
+}
+
+#[test]
 fn test_insert_update() {
     let mut map = LinkedHashMap::new();
     map.insert("1".to_string(), vec![10, 10]);

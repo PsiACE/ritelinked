@@ -357,6 +357,21 @@ where
         }
     }
 
+    #[cfg_attr(feature = "inline-more", inline)]
+    pub fn get_refresh<Q>(&mut self, k: &Q) -> Option<&mut V>
+    where
+        K: Borrow<Q>,
+        Q: Hash + Eq + ?Sized,
+    {
+        match self.raw_entry_mut().from_key(k) {
+            RawEntryMut::Occupied(mut occupied) => {
+                occupied.to_back();
+                Some(occupied.into_mut())
+            }
+            RawEntryMut::Vacant(_) => None,
+        }
+    }
+
     /// Inserts the given key / value pair at the *back* of the internal linked list.
     ///
     /// Returns the previously set value, if one existed prior to this call.  After this call,
@@ -396,7 +411,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq + ?Sized,
     {
-        match self.raw_entry_mut().from_key(&k) {
+        match self.raw_entry_mut().from_key(k) {
             RawEntryMut::Occupied(occupied) => Some(occupied.remove()),
             RawEntryMut::Vacant(_) => None,
         }
@@ -408,7 +423,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq + ?Sized,
     {
-        match self.raw_entry_mut().from_key(&k) {
+        match self.raw_entry_mut().from_key(k) {
             RawEntryMut::Occupied(occupied) => Some(occupied.remove_entry()),
             RawEntryMut::Vacant(_) => None,
         }
