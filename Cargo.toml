@@ -1,0 +1,48 @@
+[package]
+name = "ritelinked"
+version = "0.3.2"
+authors = ["DataSlime <opensource@dataslime.com>"]
+edition = "2018"
+description = "HashMap-like containers that hold their key-value pairs in a user controllable order"
+repository = "https://github.com/dataslime/ritelinked"
+documentation = "https://docs.rs/ritelinked"
+readme = "README.md"
+keywords = ["data-structures", "no_std", "linked-hash-map", "linked-hash-set", "amortized"]
+categories = ["data-structures", "no-std"]
+license = "MIT OR Apache-2.0"
+
+[features]
+default = ["ahash-amortized", "inline-more-amortized"]
+
+ahash-compile-time-rng = ["ahash_/compile-time-rng"]
+
+ahash = [ "ahash_", "hashbrown/ahash" ]
+serde = [ "serde_", "hashbrown/serde" ]
+inline-more = [ "hashbrown/inline-more" ]
+
+amortized = ["griddle"]
+ahash-amortized = [ "ahash", "amortized", "griddle/ahash" ]
+serde-amortized = [ "serde", "amortized", "griddle/serde" ]
+inline-more-amortized = [ "inline-more", "amortized", "griddle/inline-more" ]
+
+[dependencies]
+ahash_ = { version = "0.7", default-features = false, optional = true, package = "ahash" }
+hashbrown = { version = "0.11", default-features = false }
+griddle = { version = "0.5.1", default-features = false, optional = true }
+serde_ = { version = "1.0", default-features = false, optional = true, package = "serde" }
+
+[dev-dependencies]
+# test
+fnv = "1.0.7"
+serde_test = "1.0"
+# bench
+criterion = "0.3"
+hashlink = "0.7"
+linked-hash-map = "0.5"
+
+[[bench]]
+name = "lru"
+harness = false
+
+[profile.release]
+debug = true
