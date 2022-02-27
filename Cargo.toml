@@ -2,7 +2,7 @@
 name = "ritelinked"
 version = "0.3.2"
 authors = ["DataSlime <opensource@dataslime.com>"]
-edition = "2018"
+edition = "2021"
 description = "HashMap-like containers that hold their key-value pairs in a user controllable order"
 repository = "https://github.com/dataslime/ritelinked"
 documentation = "https://docs.rs/ritelinked"
